@@ -26,9 +26,13 @@ import { IReduxState } from './types';
  * @returns {Promise<Object>}
  */
 export function _getRouteToRender(stateful: IStateful) {
+<<<<<<< HEAD
     console.log("stateful=>", stateful);
     const state = toState(stateful);
     console.log("state-=>>>.", state);
+=======
+    const state = toState(stateful);
+>>>>>>> master
 
     return _getWebConferenceRoute(state) || _getWebWelcomePageRoute(state);
 }
@@ -53,8 +57,13 @@ function _getWebConferenceRoute(state: IReduxState) {
     // if we have auto redirect enabled, and we have previously logged in successfully
     // let's redirect to the auth url to get the token and login again
     if (!browser.isElectron() && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
+<<<<<<< HEAD
         && state['features/authentication'].tokenAuthUrlSuccessful
         && !state['features/base/jwt'].jwt && room) {
+=======
+            && state['features/authentication'].tokenAuthUrlSuccessful
+            && !state['features/base/jwt'].jwt && room) {
+>>>>>>> master
         const { locationURL = { href: '' } as URL } = state['features/base/connection'];
         const { tenant } = parseURIString(locationURL.href) || {};
 
@@ -105,6 +114,10 @@ function _getWebWelcomePageRoute(state: IReduxState) {
     if (isWelcomePageEnabled(state)) {
         if (isSupportedBrowser()) {
             const customLandingPage = getCustomLandingPageURL(state);
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
             if (customLandingPage) {
                 route.href = customLandingPage;
             } else {
@@ -132,7 +145,11 @@ function _getWebWelcomePageRoute(state: IReduxState) {
 function _getEmptyRoute(): {
     component: React.ReactNode;
     href?: string;
+<<<<<<< HEAD
 } {
+=======
+    } {
+>>>>>>> master
     return {
         component: BlankPage,
         href: undefined

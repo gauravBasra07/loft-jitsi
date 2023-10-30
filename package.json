@@ -54,7 +54,10 @@
     "clsx": "1.1.1",
     "dropbox": "10.7.0",
     "focus-visible": "5.1.0",
+<<<<<<< HEAD
     "formik": "^2.4.5",
+=======
+>>>>>>> master
     "grapheme-splitter": "1.0.4",
     "i18n-iso-countries": "6.8.0",
     "i18next": "17.0.6",
@@ -65,9 +68,13 @@
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
     "js-sha512": "0.8.0",
+<<<<<<< HEAD
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "2.2.0",
     "jwt-encode": "^1.0.1",
+=======
+    "jwt-decode": "2.2.0",
+>>>>>>> master
     "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1713.0.0+a1d7b0ea/lib-jitsi-meet.tgz",
     "lodash": "4.17.21",
     "moment": "2.29.4",
@@ -112,7 +119,10 @@
     "react-native-youtube-iframe": "2.3.0",
     "react-redux": "7.2.9",
     "react-textarea-autosize": "8.3.0",
+<<<<<<< HEAD
     "react-webcam": "^7.2.0",
+=======
+>>>>>>> master
     "react-window": "1.8.6",
     "react-youtube": "10.1.0",
     "redux": "4.0.4",
@@ -126,7 +136,10 @@
     "wasm-check": "2.0.1",
     "webm-duration-fix": "1.0.4",
     "windows-iana": "3.1.0",
+<<<<<<< HEAD
     "yup": "^1.3.2",
+=======
+>>>>>>> master
     "zxcvbn": "4.4.2"
   },
   "devDependencies": {
@@ -140,7 +153,10 @@
     "@types/audioworklet": "0.0.29",
     "@types/dom-screen-wake-lock": "1.0.1",
     "@types/js-md5": "0.4.3",
+<<<<<<< HEAD
     "@types/jwt-encode": "^1.0.2",
+=======
+>>>>>>> master
     "@types/lodash": "4.14.182",
     "@types/punycode": "2.1.0",
     "@types/react": "17.0.14",

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../base/environment/utils';
@@ -181,12 +181,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      *
      * @inheritdoc
      * @returns {ReactElement|null}
-     *
      */
-
-
     render() {
-
         const { _moderatedRoomServiceUrl, t } = this.props;
         const { DEFAULT_WELCOME_PAGE_LOGO_URL, DISPLAY_WELCOME_FOOTER } = interfaceConfig;
         const showAdditionalCard = this._shouldShowAdditionalCard();
@@ -524,10 +520,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _doRenderInsecureRoomNameWarning() {
         return (
-            <div className='insecure-room-name-warning'>
-                <Icon src={IconWarning} />
+            <div className = 'insecure-room-name-warning'>
+                <Icon src = { IconWarning } />
                 <span>
-                    {getUnsafeRoomText(this.props.t, 'welcome')}
+                    { getUnsafeRoomText(this.props.t, 'welcome') }
                 </span>
             </div>
         );
@@ -540,10 +536,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      * @private
      * @returns {void}
      */
-
-
-
-
     _onFormSubmit(event: React.FormEvent) {
         event.preventDefault();
 
@@ -578,10 +570,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             t,
             _deeplinkingCfg: {
                 ios = { downloadLink: undefined },
-                android = {
-                    fDroidUrl: undefined,
-                    downloadLink: undefined
-                }
+                android = { fDroidUrl: undefined,
+                    downloadLink: undefined }
             }
         } = this.props;
 
@@ -589,31 +579,31 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         const { fDroidUrl, downloadLink: androidDownloadLink } = android;
 
-        return (<footer className='welcome-footer'>
-            <div className='welcome-footer-centered'>
-                <div className='welcome-footer-padded'>
-                    <div className='welcome-footer-row-block welcome-footer--row-1'>
-                        <div className='welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
+        return (<footer className = 'welcome-footer'>
+            <div className = 'welcome-footer-centered'>
+                <div className = 'welcome-footer-padded'>
+                    <div className = 'welcome-footer-row-block welcome-footer--row-1'>
+                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
                         <a
-                            className='welcome-badge'
-                            href={iosDownloadLink}>
+                            className = 'welcome-badge'
+                            href = { iosDownloadLink }>
                             <img
-                                alt={t('welcomepage.mobileDownLoadLinkIos')}
-                                src='./images/app-store-badge.png' />
+                                alt = { t('welcomepage.mobileDownLoadLinkIos') }
+                                src = './images/app-store-badge.png' />
                         </a>
                         <a
-                            className='welcome-badge'
-                            href={androidDownloadLink}>
+                            className = 'welcome-badge'
+                            href = { androidDownloadLink }>
                             <img
-                                alt={t('welcomepage.mobileDownLoadLinkAndroid')}
-                                src='./images/google-play-badge.png' />
+                                alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
+                                src = './images/google-play-badge.png' />
                         </a>
                         <a
-                            className='welcome-badge'
-                            href={fDroidUrl}>
+                            className = 'welcome-badge'
+                            href = { fDroidUrl }>
                             <img
-                                alt={t('welcomepage.mobileDownLoadLinkFDroid')}
-                                src='./images/f-droid-badge.png' />
+                                alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
+                                src = './images/f-droid-badge.png' />
                         </a>
                     </div>
                 </div>
@@ -658,8 +648,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <Tabs
-                accessibilityLabel={t('welcomepage.meetingsAccessibilityLabel')}
-                tabs={tabs} />
+                accessibilityLabel = { t('welcomepage.meetingsAccessibilityLabel') }
+                tabs = { tabs } />
         );
     }
 
