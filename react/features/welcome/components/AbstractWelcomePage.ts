@@ -74,6 +74,7 @@ interface IState {
     updateTimeoutId?: number;
     cameraShow: boolean;
     micShow: boolean;
+    loader: boolean;
 }
 
 /**
@@ -112,6 +113,7 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         hintBoxAnimation: 0,
         cameraShow: false,
         micShow: false,
+        loader: false
     };
 
     /**

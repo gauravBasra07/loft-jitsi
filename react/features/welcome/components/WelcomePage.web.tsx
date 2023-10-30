@@ -12,6 +12,7 @@ import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
 
+
 import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import { toState } from '../../base/redux/functions';
@@ -19,6 +20,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from 'yup';
 import sign from 'jwt-encode';
 import Webcam from "react-webcam";
+import { AxiosApiHitter } from "../../modules"
+import { Config } from "../../../ThirdPartyConfig";
 
 /**
  * The pattern used to validate room name.
@@ -237,7 +240,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 })
             })}
                 onSubmit={values => {
-                    this._onJoinTest(values);
+                    this._initMeeting(values);
                 }}
             >
                 {
@@ -245,6 +248,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <div
                             className={`welcome ${contentClassName} ${footerClassName}`}
                             id='welcome_page'>
+
                             <section className="join-meeting-sec">
                                 <div className="container">
                                     <div className="onship-logo">
@@ -321,8 +325,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                                             <Field name="displayName" type="test" />
                                                         </div>
                                                         <ErrorMessage name="displayName" />
-                                                        <button className="btn primary-btn" onClick={(e: any) => props.handleSubmit(e)}>
-                                                            Join Now
+                                                        <button type="submit" className="btn primary-btn" onClick={(e: any) => props.handleSubmit(e)} disabled={this.state.loader}>
+                                                            {
+                                                                this.state.loader ? <span className="loader" /> : 'Join Now'
+                                                            }
                                                         </button>
                                                         <a className="new-meeting-btn" onClick={() => props.setFieldValue("meetingType", "start")}>
                                                             Start new meeting
@@ -474,10 +480,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         : null }
                 </div>
                 { DISPLAY_WELCOME_FOOTER && this._renderFooter()} */
-
-
-
-    _onJoinTest(formikData: {
+    async _initMeeting(formikData: {
         meetingType: string,
         emailId: string,
         meetingId: string,
@@ -487,31 +490,54 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         password: string
     }) {
         if (formikData?.meetingType === "join") {
-            let content = {
-                "context": {
-                    "user": {
-                        "avatar": "",
-                        "name": formikData?.displayName,
-                        "email": formikData?.emailId,
-                    }
-                },
-                "moderator": true,
-                "aud": "jitsi",
-                "iss": "and0MDA5OA==",
-                "sub": "loftdev1.onship.app",
-                "room": "*",
-                "exp": 1791678149,
-                "nbf": 1697004697
-            };
-            let token = sign(content, "OFptTnh0ekVKOXZsM0c2");
-            window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
+            try {
+                this.setState({ loader: true });
+                let response = await AxiosApiHitter('JOIN_MEETING', {
+                    meetingId: formikData?.meetingId,
+                    joinUserEmail: formikData?.emailId
+                })
+                console.log("response======>>>>", response);
+                if (response?.data?.code === 200) {
+                    console.log("response?.data?.role=>", response?.data?.role);
+                    this.setState({ loader: false });
+                    let content = {
+                        "context": {
+                            "user": {
+                                "avatar": "",
+                                "name": formikData?.displayName,
+                                "email": formikData?.emailId,
+
+                            }
+                        },
+                        "moderator": response?.data?.role === "host" ? true : false,
+                        "aud": "jitsi",
+                        "iss": Config?.JITSI_APP_ID,
+                        "sub": Config?.SELF_HOSTED_JITSI_SERVER,
+                        "room": "*",
+                        "exp": 2550716253,
+                        "nbf": 1697004697
+                    };
+                    console.log("goint =>", content);
+                    let token = sign(content, Config?.JITSI_SECRET_KEY);
+                    window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
+                } else {
+                    console.log("else part");
+                    throw new Error(response?.data?.errorMesg);
+                }
+            }
+            catch (err) {
+                console.log("Err=>", err.message);
+                this.setState({
+                    loader: false
+                });
+                // alert(err?.message);
+            }
         }
         else {
+            this.setState({ loader: false });
             alert("API integration is pending")
         }
-
     }
-
 
     /**
      * Renders the insecure room name warning.
@@ -520,10 +546,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
      */
     _doRenderInsecureRoomNameWarning() {
         return (
-            <div className = 'insecure-room-name-warning'>
-                <Icon src = { IconWarning } />
+            <div className='insecure-room-name-warning'>
+                <Icon src={IconWarning} />
                 <span>
-                    { getUnsafeRoomText(this.props.t, 'welcome') }
+                    {getUnsafeRoomText(this.props.t, 'welcome')}
                 </span>
             </div>
         );
@@ -570,8 +596,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             t,
             _deeplinkingCfg: {
                 ios = { downloadLink: undefined },
-                android = { fDroidUrl: undefined,
-                    downloadLink: undefined }
+                android = {
+                    fDroidUrl: undefined,
+                    downloadLink: undefined
+                }
             }
         } = this.props;
 
@@ -579,31 +607,31 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         const { fDroidUrl, downloadLink: androidDownloadLink } = android;
 
-        return (<footer className = 'welcome-footer'>
-            <div className = 'welcome-footer-centered'>
-                <div className = 'welcome-footer-padded'>
-                    <div className = 'welcome-footer-row-block welcome-footer--row-1'>
-                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
+        return (<footer className='welcome-footer'>
+            <div className='welcome-footer-centered'>
+                <div className='welcome-footer-padded'>
+                    <div className='welcome-footer-row-block welcome-footer--row-1'>
+                        <div className='welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
                         <a
-                            className = 'welcome-badge'
-                            href = { iosDownloadLink }>
+                            className='welcome-badge'
+                            href={iosDownloadLink}>
                             <img
-                                alt = { t('welcomepage.mobileDownLoadLinkIos') }
-                                src = './images/app-store-badge.png' />
+                                alt={t('welcomepage.mobileDownLoadLinkIos')}
+                                src='./images/app-store-badge.png' />
                         </a>
                         <a
-                            className = 'welcome-badge'
-                            href = { androidDownloadLink }>
+                            className='welcome-badge'
+                            href={androidDownloadLink}>
                             <img
-                                alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
-                                src = './images/google-play-badge.png' />
+                                alt={t('welcomepage.mobileDownLoadLinkAndroid')}
+                                src='./images/google-play-badge.png' />
                         </a>
                         <a
-                            className = 'welcome-badge'
-                            href = { fDroidUrl }>
+                            className='welcome-badge'
+                            href={fDroidUrl}>
                             <img
-                                alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
-                                src = './images/f-droid-badge.png' />
+                                alt={t('welcomepage.mobileDownLoadLinkFDroid')}
+                                src='./images/f-droid-badge.png' />
                         </a>
                     </div>
                 </div>
@@ -648,8 +676,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <Tabs
-                accessibilityLabel = { t('welcomepage.meetingsAccessibilityLabel') }
-                tabs = { tabs } />
+                accessibilityLabel={t('welcomepage.meetingsAccessibilityLabel')}
+                tabs={tabs} />
         );
     }
 
