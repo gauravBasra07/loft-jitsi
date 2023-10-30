@@ -72,11 +72,8 @@ interface IState {
     roomNameInputAnimation?: any;
     roomPlaceholder: string;
     updateTimeoutId?: number;
-<<<<<<< HEAD
     cameraShow: boolean;
     micShow: boolean;
-=======
->>>>>>> master
 }
 
 /**
@@ -112,13 +109,9 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         _fieldFocused: false,
         isSettingsScreenFocused: false,
         roomNameInputAnimation: 0,
-<<<<<<< HEAD
         hintBoxAnimation: 0,
         cameraShow: false,
         micShow: false,
-=======
-        hintBoxAnimation: 0
->>>>>>> master
     };
 
     /**
