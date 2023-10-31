@@ -75,6 +75,10 @@ interface IState {
     cameraShow: boolean;
     micShow: boolean;
     loader: boolean;
+    meetingId: string,
+    emailId: string,
+    displayName: string,
+    userType: string
 }
 
 /**
@@ -113,7 +117,11 @@ export class AbstractWelcomePage<P extends IProps> extends Component<P, IState> 
         hintBoxAnimation: 0,
         cameraShow: false,
         micShow: false,
-        loader: false
+        loader: false,
+        meetingId: "",
+        emailId: "",
+        displayName: "",
+        userType: ""
     };
 
     /**

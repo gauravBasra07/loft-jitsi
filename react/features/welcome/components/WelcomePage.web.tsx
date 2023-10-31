@@ -11,6 +11,7 @@ import CalendarList from '../../calendar-sync/components/CalendarList.web';
 import RecentList from '../../recent-list/components/RecentList.web';
 import SettingsButton from '../../settings/components/web/SettingsButton';
 import { SETTINGS_TABS } from '../../settings/constants';
+import { toast } from "react-toastify";
 
 
 import { AbstractWelcomePage, IProps, _mapStateToProps } from './AbstractWelcomePage';
@@ -19,6 +20,7 @@ import { toState } from '../../base/redux/functions';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from 'yup';
 import sign from 'jwt-encode';
+import verify from 'jwt-decode'
 import Webcam from "react-webcam";
 import { AxiosApiHitter } from "../../modules"
 import { Config } from "../../../ThirdPartyConfig";
@@ -145,6 +147,29 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
+        const queryString = window.location.search;
+
+        const urlParams = new URLSearchParams(queryString);
+
+        const entryJWT = urlParams.get("entryT");
+
+        if (entryJWT) {
+            try {
+                const decodedObj = verify(entryJWT, Config.ENTRY_TOKEN_SECRET_KEY);
+                this.setState({
+                    meetingId: decodedObj?.meetingId || "",
+                    emailId: decodedObj?.emailId || "",
+                    displayName: decodedObj?.userName || "",
+                    userType: decodedObj?.host ? "host" : "participant",
+                })
+            }
+            catch (err) {
+                toast.error(err.message);
+                window.location.replace("/");
+            }
+
+        }
+
         if (this.state.generateRoomNames) {
             this._updateRoomName();
         }
@@ -165,6 +190,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 this._additionalCardTemplate?.content.cloneNode(true) as Node
             );
         }
+
     }
 
     /**
@@ -194,53 +220,26 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         const contentClassName = showAdditionalContent ? 'with-content' : 'without-content';
         const footerClassName = DISPLAY_WELCOME_FOOTER ? 'with-footer' : 'without-footer';
 
-        function randomIdgenerator() {
-            let g = String(Math.random().toString(16) + Math.random().toString(35)).split('.');
-            g.shift()
-            return g.join('')
-        }
-
-
         return (
             <Formik initialValues={{
-                meetingType: "join",
-                meetingId: '',
-                emailId: "",
-                displayName: "",
-                startMeetingId: randomIdgenerator(),
-                startEmailId: "",
-                password: ""
+                meetingId: this.state.meetingId,
+                emailId: this.state.emailId,
+                displayName: this.state.displayName,
             }} validationSchema={Yup.object({
-                meetingId: Yup.string().when("meetingType", {
-                    is: "join",
-                    then: () => Yup.string().required("Meeting Id is required").trim().typeError("Invalid Meeting Id").min(3, "Too short")
-                        .max(30, "Too long")
-                }),
-                emailId: Yup.string().when("meetingType", {
-                    is: "join",
-                    then: () => Yup.string().matches(/^[a-zA-Z0-9\.]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Meeting Id is required")
-                }),
-                displayName: Yup.string().when("meetingType", {
-                    is: "join",
-                    then: () => Yup.string().required("Name is required").trim().matches(/^[a-zA-Z0-9-~ ]+$/, "Invalid Title").typeError("Invalid Meeting Id").min(3, "Too short")
-                        .max(20, "Too long")
-                }),
-                startMeetingId: Yup.string().when("meetingType", {
-                    is: "start",
-                    then: () => Yup.string().required("Meeting Id is required").trim().typeError("Invalid Meeting Id").min(3, "Too short")
-                        .max(30, "Too long")
-                }),
-                startEmailId: Yup.string().when("meetingType", {
-                    is: "start",
-                    then: () => Yup.string().matches(/^[a-zA-Z0-9\.]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Meeting Id is required")
-                }),
-                password: Yup.string().when("meetingType", {
-                    is: "start",
-                    then: () => Yup.string().required("Password is required").trim().typeError("Invalid Password").min(6, "Too short")
-                })
+                meetingId: Yup.string().required("Meeting Id is required").trim().typeError("Invalid Meeting Id").min(3, "Too short")
+                    .max(30, "Too long"),
+                emailId: Yup.string().matches(/^[a-zA-Z0-9\.]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Meeting Id is required"),
+                displayName: Yup.string().required("Name is required").trim().matches(/^[a-zA-Z0-9-~ ]+$/, "Invalid Title").typeError("Invalid Meeting Id").min(3, "Too short")
+                    .max(20, "Too long"),
             })}
+                enableReinitialize={true}
                 onSubmit={values => {
-                    this._initMeeting(values);
+                    const queryString = window.location.search;
+
+                    const urlParams = new URLSearchParams(queryString);
+
+                    const entryJWT = urlParams.get("entryT");
+                    this._initMeeting({ ...values, entryJWT: entryJWT || "" });
                 }}
             >
                 {
@@ -248,7 +247,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         <div
                             className={`welcome ${contentClassName} ${footerClassName}`}
                             id='welcome_page'>
-
                             <section className="join-meeting-sec">
                                 <div className="container">
                                     <div className="onship-logo">
@@ -297,84 +295,44 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                                 </div>
                                             </div>
                                             <div className="join-meeting-form">
-                                                {
-                                                    props.values.meetingType === "join" ? <>
-                                                        <h2>Ready to join</h2>
-                                                        <p>Bring ship, shore, and remote teams together, every time.</p>
-                                                        <div className="formfield">
-                                                            <label htmlFor="">Meeting ID</label>
-                                                            {/* <input type="text" placeholder={'124567890'} {...formik.getFieldProps("meetingId")} />
+                                                <h2>Ready to join</h2>
+                                                <p>Bring ship, shore, and remote teams together, every time.</p>
+                                                <div className="formfield">
+                                                    <label htmlFor="">Meeting ID</label>
+                                                    {/* <input type="text" placeholder={'124567890'} {...formik.getFieldProps("meetingId")} />
                                                      */}
-                                                            <Field name="meetingId" type="text" />
-                                                            <div className="input-right">
-                                                                <a href="#">
-                                                                    <img src="images/copy.png" alt="" />
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                        <ErrorMessage name="meetingId" />
-                                                        <div className="formfield">
-                                                            <label htmlFor="">Email ID</label>
-                                                            {/* <input type="email" placeholder="nolancurtis@gmail.com" {...formik.getFieldProps("emailId")} /> */}
-                                                            <Field name="emailId" type="text" />
-                                                        </div>
-                                                        <ErrorMessage name="emailId" />
-                                                        <div className="formfield">
-                                                            <label htmlFor="">Display name</label>
-                                                            {/* <input type="text" placeholder="Display name" {...formik.getFieldProps("displayName")} /> */}
-                                                            <Field name="displayName" type="test" />
-                                                        </div>
-                                                        <ErrorMessage name="displayName" />
-                                                        <button type="submit" className="btn primary-btn" onClick={(e: any) => props.handleSubmit(e)} disabled={this.state.loader}>
-                                                            {
-                                                                this.state.loader ? <span className="loader" /> : 'Join Now'
-                                                            }
-                                                        </button>
-                                                        <a className="new-meeting-btn" onClick={() => props.setFieldValue("meetingType", "start")}>
-                                                            Start new meeting
+                                                    <Field name="meetingId" type="text" />
+                                                    <div className="input-right">
+                                                        <a href="#">
+                                                            <img src="images/copy.png" alt="" />
                                                         </a>
+                                                    </div>
+                                                </div>
+                                                <div className='error'>
+                                                    <ErrorMessage name="meetingId" />
+                                                </div>
+                                                <div className="formfield">
+                                                    <label htmlFor="">Email ID</label>
+                                                    {/* <input type="email" placeholder="nolancurtis@gmail.com" {...formik.getFieldProps("emailId")} /> */}
+                                                    <Field name="emailId" type="text" />
+                                                </div>
+                                                <div className='error'>
+                                                    <ErrorMessage name="emailId" />
+                                                </div>
+                                                <div className="formfield">
+                                                    <label htmlFor="">Display name</label>
+                                                    {/* <input type="text" placeholder="Display name" {...formik.getFieldProps("displayName")} /> */}
+                                                    <Field name="displayName" type="test" />
+                                                </div>
+                                                <div className='error'>
+                                                    <ErrorMessage name="displayName" />
+                                                </div>
 
-                                                    </> : <>
-                                                        <div className="join-meeting-form">
-                                                            <h2>Initiate Loft</h2>
-                                                            <p>Bring ship, shore, and remote teams together, every time.</p>
-                                                            <div className="formfield">
-                                                                <label htmlFor="">Meeting ID</label>
-
-                                                                <Field name="startMeetingId" type="text" value={props.values.startMeetingId} />
-                                                                {/* <input type="text" value={props.values.startMeetingId} /> */}
-                                                                <div className="input-right">
-                                                                    <a href="#">
-                                                                        <img src="images/copy.png" alt="" />
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                            <ErrorMessage name="startMeetingId" />
-                                                            <div className="formfield">
-                                                                <label htmlFor="">Email ID</label>
-                                                                <Field name="startEmailId" type="text" />
-                                                            </div>
-                                                            <ErrorMessage name="startEmailId" />
-                                                            <div className="formfield">
-                                                                <label htmlFor="">Password</label>
-                                                                <Field name="password" type="password" />
-                                                            </div>
-                                                            <ErrorMessage name="password" />
-                                                            <div className="join-meeting-btn-grp">
-                                                                <button className="btn primary-btn">
-                                                                    Create for later
-                                                                </button>
-                                                                <button className="btn primary-btn" onClick={(e: any) => props.handleSubmit(e)} >
-                                                                    Start Now
-                                                                </button>
-                                                            </div>
-                                                            <a className="new-meeting-btn" onClick={() => props.setFieldValue("meetingType", "join")}>
-                                                                Join meeting with room ID
-                                                            </a>
-                                                        </div>
-                                                    </>
-                                                }
-
+                                                <button type="submit" className="btn primary-btn" onClick={(e: any) => props.handleSubmit(e)} disabled={this.state.loader}>
+                                                    {
+                                                        this.state.loader ? <span className="loader" /> : this.state.userType === "host" ? 'Start meeting' : this.state.userType === "participant" ? 'Join Now' : "Join/Start meeting"
+                                                    }
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -385,7 +343,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         </div>
                     )
                 }
-
             </Formik>
         );
     }
@@ -480,62 +437,130 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         : null }
                 </div>
                 { DISPLAY_WELCOME_FOOTER && this._renderFooter()} */
+
+    /**
+     * 
+     * @param formikData 
+     */
     async _initMeeting(formikData: {
-        meetingType: string,
         emailId: string,
         meetingId: string,
         displayName: string,
-        startMeetingId: string,
-        startEmailId: string,
-        password: string
+        entryJWT: string
     }) {
-        if (formikData?.meetingType === "join") {
-            try {
-                this.setState({ loader: true });
-                let response = await AxiosApiHitter('JOIN_MEETING', {
-                    meetingId: formikData?.meetingId,
-                    joinUserEmail: formikData?.emailId
-                })
-                console.log("response======>>>>", response);
-                if (response?.data?.code === 200) {
-                    console.log("response?.data?.role=>", response?.data?.role);
-                    this.setState({ loader: false });
-                    let content = {
-                        "context": {
-                            "user": {
-                                "avatar": "",
-                                "name": formikData?.displayName,
-                                "email": formikData?.emailId,
-
-                            }
-                        },
-                        "moderator": response?.data?.role === "host" ? true : false,
-                        "aud": "jitsi",
-                        "iss": Config?.JITSI_APP_ID,
-                        "sub": Config?.SELF_HOSTED_JITSI_SERVER,
-                        "room": "*",
-                        "exp": 2550716253,
-                        "nbf": 1697004697
-                    };
-                    console.log("goint =>", content);
-                    let token = sign(content, Config?.JITSI_SECRET_KEY);
-                    window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
-                } else {
-                    console.log("else part");
-                    throw new Error(response?.data?.errorMesg);
-                }
-            }
-            catch (err) {
-                console.log("Err=>", err.message);
-                this.setState({
-                    loader: false
-                });
-                // alert(err?.message);
-            }
+        if (!formikData.entryJWT) {
+            console.log("token not found, hiting participant Api");
+            this._initMeetingAsAParticipant(formikData)
+        }
+        else if (this.state.userType === "participant") {
+            console.log("going to hit participant meeting");
+            this._initMeetingAsAParticipant(formikData)
+        }
+        else if (this.state.userType === "host") {
+            console.log("going to hit Host meeting")
+            this._initMeetingAsAHost(formikData)
         }
         else {
+            toast.error("SOMETHING WENT WRONG IN USER_TYPE");
+        }
+
+    }
+
+    /**
+     * 
+     */
+    async _initMeetingAsAHost(formikData: {
+        emailId: string,
+        meetingId: string,
+        displayName: string,
+        entryJWT: string
+    }) {
+        try {
+            this.setState({ loader: true });
+            let response = await AxiosApiHitter("START_MEETING", {
+                meetingId: formikData?.meetingId,
+                userEmail: formikData?.emailId
+            })
+            console.log("response in host=>>", response);
             this.setState({ loader: false });
-            alert("API integration is pending")
+            if (response?.data?.code === 200) {
+                let content = {
+                    "context": {
+                        "user": {
+                            "avatar": "",
+                            "name": formikData?.displayName,
+                            "email": formikData?.emailId,
+                            "moderator": true,
+                        }
+                    },
+                    "moderator": true,
+                    "aud": "jitsi",
+                    "iss": Config?.JITSI_APP_ID,
+                    "sub": Config?.SELF_HOSTED_JITSI_SERVER,
+                    "room": "*",
+                    "exp": 2550716253,
+                    "nbf": 1697004697
+                };
+                let token = sign(content, Config?.JITSI_SECRET_KEY);
+                // window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
+                toast.success("Please wait! while redirect to your meeting");
+            } else {
+                throw new Error(response?.data?.error);
+            }
+        }
+        catch (err) {
+            toast.error(err.message || "Something went wrong")
+        }
+    }
+
+    async _initMeetingAsAParticipant(formikData: {
+        emailId: string,
+        meetingId: string,
+        displayName: string,
+        entryJWT: string
+    }) {
+        try {
+            this.setState({ loader: true });
+            let response = await AxiosApiHitter('JOIN_MEETING', {
+                meetingId: formikData?.meetingId,
+                joinUserEmail: formikData?.emailId
+            })
+            this.setState({ loader: false });
+            if (response?.data?.code === 200) {
+                if (response?.data?.role === "host" && !formikData.entryJWT) {
+                    console.log("found host but no token");
+                    return this._initMeetingAsAHost(formikData);
+                }
+                let content = {
+                    "context": {
+                        "user": {
+                            "avatar": "",
+                            "name": formikData?.displayName,
+                            "email": formikData?.emailId,
+                            "moderator": response?.data?.role === "host" ? true : false,
+                        }
+                    },
+                    "moderator": response?.data?.role === "host" ? true : false,
+                    "aud": "jitsi",
+                    "iss": Config?.JITSI_APP_ID,
+                    "sub": Config?.SELF_HOSTED_JITSI_SERVER,
+                    "room": "*",
+                    "exp": 2550716253,
+                    "nbf": 1697004697
+                };
+                let token = sign(content, Config?.JITSI_SECRET_KEY);
+                // window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
+                toast.success("Please wait! while redirect to the meeting");
+            } else {
+                throw new Error(response?.data?.errorMesg);
+            }
+        }
+        catch (err) {
+            this.setState({
+                loader: false
+            });
+            toast.error(err.message || "Something went wrong");
+            // alert(err?.message);
         }
     }
 
