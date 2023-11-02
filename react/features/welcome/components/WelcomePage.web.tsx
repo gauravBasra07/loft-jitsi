@@ -160,14 +160,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     meetingId: decodedObj?.meetingId || "",
                     emailId: decodedObj?.emailId || "",
                     displayName: decodedObj?.userName || "",
-                    userType: decodedObj?.host ? "host" : "participant",
+                    userType: decodedObj?.role === "host" ? "host" : "participant",
                 })
             }
             catch (err: any) {
                 toast.error(err.message);
                 window.location.replace("/");
             }
-
         }
 
         if (this.state.generateRoomNames) {
