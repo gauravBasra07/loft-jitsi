@@ -38,8 +38,9 @@ export const LeaveConferenceButton = (props: IProps) => {
     const dispatch = useDispatch();
 
     const onLeaveConference = useCallback(() => {
-        sendAnalytics(createToolbarEvent('hangup'));
-        dispatch(leaveConference());
+        // sendAnalytics(createToolbarEvent('hangup'));
+        // dispatch(leaveConference());
+        console.log("Leave conference@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     }, [ dispatch ]);
 
     return (

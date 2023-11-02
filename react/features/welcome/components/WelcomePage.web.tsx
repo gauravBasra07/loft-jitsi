@@ -20,11 +20,11 @@ import { toState } from '../../base/redux/functions';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from 'yup';
 import sign from 'jwt-encode';
-import verify from 'jwt-decode'
+// import verify from 'jwt-decode'
 import Webcam from "react-webcam";
 import { AxiosApiHitter } from "../../modules"
 import { Config } from "../../../ThirdPartyConfig";
-
+const verify = require("jwt-decode");
 /**
  * The pattern used to validate room name.
  *
@@ -163,7 +163,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     userType: decodedObj?.host ? "host" : "participant",
                 })
             }
-            catch (err) {
+            catch (err: any) {
                 toast.error(err.message);
                 window.location.replace("/");
             }
@@ -502,13 +502,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     "nbf": 1697004697
                 };
                 let token = sign(content, Config?.JITSI_SECRET_KEY);
-                // window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
+                window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
                 toast.success("Please wait! while redirect to your meeting");
             } else {
                 throw new Error(response?.data?.error);
             }
         }
-        catch (err) {
+        catch (err: any) {
             toast.error(err.message || "Something went wrong")
         }
     }
@@ -549,13 +549,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     "nbf": 1697004697
                 };
                 let token = sign(content, Config?.JITSI_SECRET_KEY);
-                // window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
+                window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
                 toast.success("Please wait! while redirect to the meeting");
             } else {
                 throw new Error(response?.data?.errorMesg);
             }
         }
-        catch (err) {
+        catch (err: any) {
             this.setState({
                 loader: false
             });

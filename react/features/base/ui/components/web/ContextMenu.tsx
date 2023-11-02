@@ -1,5 +1,7 @@
-import React, { KeyboardEvent, ReactNode,
-    useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+    KeyboardEvent, ReactNode,
+    useCallback, useEffect, useLayoutEffect, useRef, useState
+} from 'react';
 import { FocusOn } from 'react-focus-on';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
@@ -189,7 +191,7 @@ const ContextMenu = ({
     tabIndex,
     ...aria
 }: IProps) => {
-    const [ isHidden, setIsHidden ] = useState(true);
+    const [isHidden, setIsHidden] = useState(true);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const { classes: styles, cx } = useStyles();
     const _overflowDrawer = useSelector(showOverflowDrawer);
@@ -228,22 +230,22 @@ const ContextMenu = ({
         } else {
             hidden === undefined && setIsHidden(true);
         }
-    }, [ entity, offsetTarget, _overflowDrawer ]);
+    }, [entity, offsetTarget, _overflowDrawer]);
 
     useEffect(() => {
         if (hidden !== undefined) {
             setIsHidden(hidden);
         }
-    }, [ hidden ]);
+    }, [hidden]);
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
         const { current: listRef } = containerRef;
         const currentFocusElement = document.activeElement;
 
         const moveFocus = (
-                list: Element | null,
-                currentFocus: Element | null,
-                traversalFunction: (
+            list: Element | null,
+            currentFocus: Element | null,
+            traversalFunction: (
                 list: Element | null,
                 currentFocus: Element | null
             ) => Element | null
@@ -280,8 +282,8 @@ const ContextMenu = ({
         };
 
         const previousItem = (
-                list: Element | null,
-                item: Element | null
+            list: Element | null,
+            item: Element | null
         ): Element | null => {
             /**
             * To find the last child of the list.
@@ -315,8 +317,8 @@ const ContextMenu = ({
         };
 
         const nextItem = (
-                list: Element | null,
-                item: Element | null
+            list: Element | null,
+            item: Element | null
         ): Element | null => {
             if (!list) {
                 return null;
@@ -357,16 +359,16 @@ const ContextMenu = ({
             event.preventDefault();
             moveFocus(listRef, currentFocusElement, nextItem);
         }
-    }, [ containerRef ]);
+    }, [containerRef]);
 
     const removeFocus = useCallback(() => {
         onDrawerClose?.();
-    }, [ onMouseLeave ]);
+    }, [onMouseLeave]);
 
     if (_overflowDrawer && inDrawer) {
         return (<div
-            className = { styles.drawer }
-            onClick = { onDrawerClose }>
+            className={styles.drawer}
+            onClick={onDrawerClose}>
             {children}
         </div>);
     }
@@ -374,11 +376,11 @@ const ContextMenu = ({
     return _overflowDrawer
         ? <JitsiPortal>
             <Drawer
-                isOpen = { Boolean(isDrawerOpen && _overflowDrawer) }
-                onClose = { onDrawerClose }>
+                isOpen={Boolean(isDrawerOpen && _overflowDrawer)}
+                onClose={onDrawerClose}>
                 <div
-                    className = { styles.drawer }
-                    onClick = { onDrawerClose }>
+                    className={styles.drawer}
+                    onClick={onDrawerClose}>
                     {children}
                 </div>
             </Drawer>
@@ -388,24 +390,24 @@ const ContextMenu = ({
             // Use the `enabled` prop instead of conditionally rendering ReactFocusOn
             // to prevent UI stutter on dialog appearance. It seems the focus guards generated annoy
             // our DialogPortal positioning calculations.
-            enabled = { activateFocusTrap && !isHidden }
-            onClickOutside = { removeFocus }
-            onEscapeKey = { removeFocus }>
+            enabled={activateFocusTrap && !isHidden}
+            onClickOutside={removeFocus}
+            onEscapeKey={removeFocus}>
             <div
-                { ...aria }
-                aria-label = { accessibilityLabel }
-                className = { cx(styles.contextMenu,
-                isHidden && styles.contextMenuHidden,
-                className
-                ) }
-                id = { id }
-                onClick = { onClick }
-                onKeyDown = { onKeyDown ?? handleKeyDown }
-                onMouseEnter = { onMouseEnter }
-                onMouseLeave = { onMouseLeave }
-                ref = { containerRef }
-                role = { role }
-                tabIndex = { tabIndex }>
+                {...aria}
+                aria-label={accessibilityLabel}
+                className={cx(styles.contextMenu,
+                    isHidden && styles.contextMenuHidden,
+                    className
+                )}
+                id={id}
+                onClick={onClick}
+                onKeyDown={onKeyDown ?? handleKeyDown}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                ref={containerRef}
+                role={role}
+                tabIndex={tabIndex}>
                 {children}
             </div>
         </FocusOn >;

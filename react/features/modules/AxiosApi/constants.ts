@@ -1,5 +1,6 @@
 
-export const ApiEndPoint = {
+export const ApiEndPoint: { [key: string]: string } = {
     JOIN_MEETING: "/loft/v2/join-meeting",
-    START_MEETING: "/loft/v2/start-meeting"
+    START_MEETING: "/loft/v2/start-meeting",
+    END_MEETING: "/loft/v2/end-meeting"
 }
