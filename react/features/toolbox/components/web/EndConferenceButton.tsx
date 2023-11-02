@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,6 +11,7 @@ import { HangupContextMenuItem } from './HangupContextMenuItem';
 // import { getLocalParticipant } from '../participants/functions';
 import { getLocalParticipant } from '../../../base/participants/functions';
 import { AxiosApiHitter } from "../../../modules";
+import { AllMessages } from "../../../modules/AxiosApi/AllMessages";
 import { toast } from 'react-toastify';
 
 
@@ -43,6 +44,7 @@ export const EndConferenceButton = (props: IProps) => {
     const dispatch = useDispatch();
     const _isLocalParticipantModerator = useSelector(isLocalParticipantModerator);
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
+    const toastId: any = useRef(null);
 
     const onEndConference = useCallback(async () => {
         // dispatch(endConference());
@@ -51,15 +53,20 @@ export const EndConferenceButton = (props: IProps) => {
         const state = APP.store.getState()
         const { email } = getLocalParticipant(state) ?? {};
         try {
-
+            toastId.current = toast.loading(AllMessages.WAITING_API_RESPONSE_MESSAGE);
             let response = await AxiosApiHitter("END_MEETING", {
                 meetingId: window.location.pathname?.split('/')[1] || "",
                 userEmail: email || ""
             })
-            console.log("response before=>", response?.data);
 
             if (response?.data?.code == 200) {
-                console.log("response->", response?.data);
+                toast.update(toastId.current, {
+                    render: AllMessages?.END_CONFERENCE_MESSAGE,
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2000,
+                    closeButton: true
+                })
                 dispatch(endConference());
             }
             else {
@@ -67,9 +74,15 @@ export const EndConferenceButton = (props: IProps) => {
             }
         }
         catch (err) {
-            toast.error(err.message);
+            toast.update(toastId.current, {
+                render: err.message,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000,
+                closeButton: true
+            })
         }
- 
+
         console.log("endConference");
     }, [dispatch]);
 
