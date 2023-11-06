@@ -53,7 +53,7 @@ class HangupButton extends AbstractHangupButton<AbstractButtonProps> {
                     throw new Error(response?.data?.error)
                 }
             }
-            catch (err) {
+            catch (err:any) {
                 toast.error(err.message);
             }
         });

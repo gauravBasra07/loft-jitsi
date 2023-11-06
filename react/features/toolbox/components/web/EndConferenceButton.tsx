@@ -73,7 +73,7 @@ export const EndConferenceButton = (props: IProps) => {
                 throw new Error(response?.data?.error)
             }
         }
-        catch (err) {
+        catch (err: any) {
             toast.update(toastId.current, {
                 render: err.message,
                 type: "error",
