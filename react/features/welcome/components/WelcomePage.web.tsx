@@ -227,7 +227,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             }} validationSchema={Yup.object({
                 meetingId: Yup.string().required("Meeting Id is required").trim().typeError("Invalid Meeting Id").min(3, "Too short")
                     .max(30, "Too long"),
-                emailId: Yup.string().matches(/^[a-zA-Z0-9\.]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Meeting Id is required"),
+                emailId: Yup.string().matches(/^[a-zA-Z0-9\.]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Email Id is required"),
                 displayName: Yup.string().required("Name is required").trim().matches(/^[a-zA-Z0-9-~ ]+$/, "Invalid Title").typeError("Invalid Meeting Id").min(3, "Too short")
                     .max(20, "Too long"),
             })}
