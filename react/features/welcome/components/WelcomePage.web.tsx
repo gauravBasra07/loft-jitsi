@@ -448,15 +448,12 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         entryJWT: string
     }) {
         if (!formikData.entryJWT) {
-            console.log("token not found, hiting participant Api");
             this._initMeetingAsAParticipant(formikData)
         }
         else if (this.state.userType === "participant") {
-            console.log("going to hit participant meeting");
             this._initMeetingAsAParticipant(formikData)
         }
         else if (this.state.userType === "host") {
-            console.log("going to hit Host meeting")
             this._initMeetingAsAHost(formikData)
         }
         else {
@@ -480,7 +477,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 meetingId: formikData?.meetingId,
                 userEmail: formikData?.emailId
             })
-            console.log("response in host=>>", response);
             this.setState({ loader: false });
             if (response?.data?.code === 200) {
                 let content = {
@@ -489,10 +485,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             "avatar": "",
                             "name": formikData?.displayName,
                             "email": formikData?.emailId,
-                            "moderator": true,
+                            "affiliation": "owner",
+                            "lobby_bypass": true
                         }
                     },
-                    "moderator": true,
                     "aud": "jitsi",
                     "iss": Config?.JITSI_APP_ID,
                     "sub": Config?.SELF_HOSTED_JITSI_SERVER,
@@ -500,6 +496,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                     "exp": 2550716253,
                     "nbf": 1697004697
                 };
+
                 let token = sign(content, Config?.JITSI_SECRET_KEY);
                 window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
                 toast.success("Please wait! while redirect to your meeting");
@@ -527,7 +524,6 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             this.setState({ loader: false });
             if (response?.data?.code === 200) {
                 if (response?.data?.role === "host" && !formikData.entryJWT) {
-                    console.log("found host but no token");
                     return this._initMeetingAsAHost(formikData);
                 }
                 let content = {
@@ -536,10 +532,10 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             "avatar": "",
                             "name": formikData?.displayName,
                             "email": formikData?.emailId,
-                            "moderator": response?.data?.role === "host" ? true : false,
+                            "affiliation": response?.data?.role === "host" ? "owner" : "member",
+                            "lobby_bypass": response?.data?.role === "host" ? true : false
                         }
                     },
-                    "moderator": response?.data?.role === "host" ? true : false,
                     "aud": "jitsi",
                     "iss": Config?.JITSI_APP_ID,
                     "sub": Config?.SELF_HOSTED_JITSI_SERVER,
@@ -550,6 +546,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 let token = sign(content, Config?.JITSI_SECRET_KEY);
                 window.location.replace(`/${formikData?.meetingId}?jwt=${token}#config.startWithVideoMuted=${!this.state.cameraShow}&config.startWithAudioMuted=${!this.state.micShow}`);
                 toast.success("Please wait! while redirect to the meeting");
+
             } else {
                 throw new Error(response?.data?.errorMesg);
             }
