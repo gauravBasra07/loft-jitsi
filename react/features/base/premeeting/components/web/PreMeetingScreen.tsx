@@ -190,13 +190,13 @@ const PreMeetingScreen = ({
                         <h1 className = { classes.title }>
                             {title}
                         </h1>
-                        {_roomName && (
+                        {/* {_roomName && (
                             <span className = { classes.roomName }>
                                 {_roomName}
                             </span>
-                        )}
+                        )} */}
                         {children}
-                        {_buttons.length && <Toolbox toolbarButtons = { _buttons } />}
+                        {/* {_buttons.length && <Toolbox toolbarButtons = { _buttons } />} */}
                         {skipPrejoinButton}
                         {showUnsafeRoomWarning && <UnsafeRoomWarning />}
                         {showDeviceStatus && <DeviceStatus />}
