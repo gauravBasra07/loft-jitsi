@@ -249,7 +249,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                             <section className="join-meeting-sec">
                                 <div className="container">
                                     <div className="onship-logo">
-                                        <img src="images/onship-logo.png" alt="" />
+                                        <img src="images/vikrant-logo.png" alt="" />
                                     </div>
                                     <div className="join-meeting-wrapper">
                                         <h1>Reliable video conferencing</h1>

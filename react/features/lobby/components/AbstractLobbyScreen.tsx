@@ -449,7 +449,7 @@ export function _mapStateToProps(state: IReduxState) {
     const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
 
     return {
-        _deviceStatusVisible: deviceStatusVisible,
+        _deviceStatusVisible: false/*deviceStatusVisible*/,
         _isDisplayNameRequiredActive: Boolean(isDisplayNameRequiredError),
         _knocking: knocking,
         _lobbyChatMessages: messages,

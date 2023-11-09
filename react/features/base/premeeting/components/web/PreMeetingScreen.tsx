@@ -181,13 +181,13 @@ const PreMeetingScreen = ({
     } : {};
 
     return (
-        <div className = { clsx('premeeting-screen', classes.container, className) }>
-            <div style = { style }>
-                <div className = { classes.content }>
+        <div className={clsx('premeeting-screen', classes.container, className)}>
+            <div style={style}>
+                <div className={classes.content}>
                     <ConnectionStatus />
 
-                    <div className = { classes.contentControls }>
-                        <h1 className = { classes.title }>
+                    <div className={classes.contentControls}>
+                        <h1 className={classes.title}>
                             {title}
                         </h1>
                         {/* {_roomName && (
