@@ -56,6 +56,7 @@ const useStyles = makeStyles()(theme => {
 });
 
 const Tooltip = ({ containerClassName, content, children, position = 'top' }: IProps) => {
+
     const dispatch = useDispatch();
     const [ visible, setVisible ] = useState(false);
     const [ isUnmounting, setIsUnmounting ] = useState(false);

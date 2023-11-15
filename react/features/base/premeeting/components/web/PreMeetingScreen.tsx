@@ -196,7 +196,7 @@ const PreMeetingScreen = ({
                             </span>
                         )} */}
                         {children}
-                        {/* {_buttons.length && <Toolbox toolbarButtons = { _buttons } />} */}
+                        {_buttons.length && <Toolbox toolbarButtons = { _buttons } />}
                         {skipPrejoinButton}
                         {showUnsafeRoomWarning && <UnsafeRoomWarning />}
                         {showDeviceStatus && <DeviceStatus />}

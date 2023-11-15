@@ -193,7 +193,7 @@ export function getConferenceName(stateful: IStateful): string {
         || subject
         || callDisplayName
         || callee?.name
-        || (room && safeStartCase(safeDecodeURIComponent(room)))) ?? '';
+        || (room && safeDecodeURIComponent(room))) ?? '';
 }
 
 /**
@@ -204,7 +204,7 @@ export function getConferenceName(stateful: IStateful): string {
  * @returns {string} - The name of the conference formatted for the title.
  */
 export function getConferenceNameForTitle(stateful: IStateful) {
-    return safeStartCase(safeDecodeURIComponent(getConferenceState(toState(stateful)).room ?? ''));
+    return (safeDecodeURIComponent(getConferenceState(toState(stateful)).room ?? ''));
 }
 
 /**
