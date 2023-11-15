@@ -187,6 +187,9 @@ const PreMeetingScreen = ({
                     <ConnectionStatus />
 
                     <div className={classes.contentControls}>
+                        <div className="onship-logo">
+                            <img src="images/vikrant-logo.png" alt="" />
+                        </div>
                         <h1 className={classes.title}>
                             {title}
                         </h1>
@@ -196,7 +199,7 @@ const PreMeetingScreen = ({
                             </span>
                         )} */}
                         {children}
-                        {_buttons.length && <Toolbox toolbarButtons = { _buttons } />}
+                        {_buttons.length && <Toolbox toolbarButtons={_buttons} />}
                         {skipPrejoinButton}
                         {showUnsafeRoomWarning && <UnsafeRoomWarning />}
                         {showDeviceStatus && <DeviceStatus />}
@@ -204,8 +207,8 @@ const PreMeetingScreen = ({
                 </div>
             </div>
             <Preview
-                videoMuted = { videoMuted }
-                videoTrack = { videoTrack } />
+                videoMuted={videoMuted}
+                videoTrack={videoTrack} />
         </div>
     );
 };

@@ -153,7 +153,8 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      */
     componentDidMount() {
-        document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+        // document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+        document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
     }
 
@@ -210,21 +211,21 @@ class Conference extends AbstractConference<IProps, any> {
 
         return (
             <div
-                id = 'layout_wrapper'
-                onMouseEnter = { this._onMouseEnter }
-                onMouseLeave = { this._onMouseLeave }
-                onMouseMove = { this._onMouseMove }
-                ref = { this._setBackground }>
+                id='layout_wrapper'
+                onMouseEnter={this._onMouseEnter}
+                onMouseLeave={this._onMouseLeave}
+                onMouseMove={this._onMouseMove}
+                ref={this._setBackground}>
                 <Chat />
                 <div
-                    className = { _layoutClassName }
-                    id = 'videoconference_page'
-                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
+                    className={_layoutClassName}
+                    id='videoconference_page'
+                    onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}>
                     <ConferenceInfo />
                     <Notice />
                     <div
-                        id = 'videospace'
-                        onTouchStart = { this._onVidespaceTouchStart }>
+                        id='videospace'
+                        onTouchStart={this._onVidespaceTouchStart}>
                         <LargeVideo />
                         {
                             _showPrejoin || _showLobby || (<>
@@ -235,20 +236,20 @@ class Conference extends AbstractConference<IProps, any> {
                         }
                     </div>
 
-                    { _showPrejoin || _showLobby || (
+                    {_showPrejoin || _showLobby || (
                         <>
                             <span
-                                aria-level = { 1 }
-                                className = 'sr-only'
-                                role = 'heading'>
-                                { t('toolbar.accessibilityLabel.heading') }
+                                aria-level={1}
+                                className='sr-only'
+                                role='heading'>
+                                {t('toolbar.accessibilityLabel.heading')}
                             </span>
                             <Toolbox />
                         </>
                     )}
 
                     {_notificationsVisible && !_isAnyOverlayVisible && (_overflowDrawer
-                        ? <JitsiPortal className = 'notification-portal'>
+                        ? <JitsiPortal className='notification-portal'>
                             {this.renderNotificationsContainer({ portal: true })}
                         </JitsiPortal>
                         : this.renderNotificationsContainer())
@@ -256,8 +257,8 @@ class Conference extends AbstractConference<IProps, any> {
 
                     <CalleeInfoContainer />
 
-                    { _showPrejoin && <Prejoin />}
-                    { _showLobby && <LobbyScreen />}
+                    {_showPrejoin && <Prejoin />}
+                    {_showLobby && <LobbyScreen />}
                 </div>
                 <ParticipantsPane />
             </div>
