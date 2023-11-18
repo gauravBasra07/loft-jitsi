@@ -185,6 +185,7 @@ class VideoQualitySlider extends Component<IProps> {
         const { classes, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
+        // console.log("activeSliderOption=>", activeSliderOption);
         return (
             <div className = { clsx('video-quality-dialog', classes.dialog) }>
                 <div
@@ -292,7 +293,8 @@ class VideoQualitySlider extends Component<IProps> {
                 ({ audioOnly }) => audioOnly);
 
             // @ts-ignore
-            return _sliderOptions.indexOf(audioOnlyOption);
+            // return _sliderOptions.indexOf(audioOnlyOption);
+            return 1;
         }
 
         for (let i = 0; i < _sliderOptions.length; i++) {
