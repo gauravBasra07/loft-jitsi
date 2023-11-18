@@ -176,20 +176,6 @@ class VideoQualitySlider extends Component<IProps> {
     }
 
     /**
-     * 
-     *
-     */
-    
-    // componentDidMount() {
-    //     console.log("DDDDDDIIIIIIDDD mounttttttttt =>>>>>");
-    //     sendAnalytics(createEvent('standard'));
-    //     logger.log('Video quality: standard enabled');
-    //     this._setPreferredVideoQuality(STANDARD);
-    // }
-
-
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
