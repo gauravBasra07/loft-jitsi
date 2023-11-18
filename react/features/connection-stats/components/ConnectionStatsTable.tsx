@@ -750,10 +750,10 @@ const ConnectionStatsTable = ({
             <tbody>
                 {_renderConnectionSummary()}
                 {_renderBitrate()}
-                {_renderPacketLoss()}
-                {_renderResolution()}
-                {_renderFrameRate()}
-                {_renderCodecs()}
+                {/* {_renderPacketLoss()} */}
+                {/* {_renderResolution()} */}
+                {/* {_renderFrameRate()} */}
+                {/* {_renderCodecs()} */}
             </tbody>
         </table>
     );
