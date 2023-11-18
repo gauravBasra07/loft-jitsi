@@ -176,6 +176,20 @@ class VideoQualitySlider extends Component<IProps> {
     }
 
     /**
+     * 
+     *
+     */
+    
+    // componentDidMount() {
+    //     console.log("DDDDDDIIIIIIDDD mounttttttttt =>>>>>");
+    //     sendAnalytics(createEvent('standard'));
+    //     logger.log('Video quality: standard enabled');
+    //     this._setPreferredVideoQuality(STANDARD);
+    // }
+
+
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -293,8 +307,7 @@ class VideoQualitySlider extends Component<IProps> {
                 ({ audioOnly }) => audioOnly);
 
             // @ts-ignore
-            // return _sliderOptions.indexOf(audioOnlyOption);
-            return 1;
+            return _sliderOptions.indexOf(audioOnlyOption);
         }
 
         for (let i = 0; i < _sliderOptions.length; i++) {
