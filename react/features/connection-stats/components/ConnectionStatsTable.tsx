@@ -772,11 +772,11 @@ const ConnectionStatsTable = ({
                     [classes.mobile]: isMobileBrowser() || isNarrowLayout }) }
                 onClick = { onClick }>
                 {_renderStatistics()}
-                <div className = { classes.actions }>
+                {/* <div className = { classes.actions }>
                     {isLocalVideo && enableSaveLogs ? _renderSaveLogs() : null}
                     {!disableShowMoreStats && _renderShowMoreLink()}
                 </div>
-                {shouldShowMore ? _renderAdditionalStats() : null}
+                {shouldShowMore ? _renderAdditionalStats() : null} */}
             </div>
         </ContextMenu>
     );
