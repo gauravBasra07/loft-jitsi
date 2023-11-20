@@ -23,8 +23,9 @@ import VideoQualityDialog from './VideoQualityDialog.web';
  */
 const VideoQualityLabel = () => {
     const _audioOnly = useSelector((state: IReduxState) => state['features/base/audio-only'].enabled);
-    const _visible = useSelector((state: IReduxState) => !(shouldDisplayTileView(state)
-        || interfaceConfig.VIDEO_QUALITY_LABEL_DISABLED));
+    // const _visible = useSelector((state: IReduxState) => !(shouldDisplayTileView(state)
+    //     || interfaceConfig.VIDEO_QUALITY_LABEL_DISABLED));
+    const _visible = true;
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
