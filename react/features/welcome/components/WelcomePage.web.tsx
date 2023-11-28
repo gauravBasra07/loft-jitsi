@@ -152,6 +152,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         const urlParams = new URLSearchParams(queryString);
 
         const entryJWT = urlParams.get("entryT");
+        const mId = urlParams.get("mid");
 
         if (entryJWT) {
             try {
@@ -167,6 +168,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 toast.error(err.message);
                 window.location.replace("/");
             }
+        }
+        else if (mId) {
+            this.setState({ meetingId: mId || "" });
         }
 
         if (this.state.generateRoomNames) {
