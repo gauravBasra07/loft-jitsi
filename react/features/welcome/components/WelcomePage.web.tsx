@@ -231,7 +231,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
             }} validationSchema={Yup.object({
                 meetingId: Yup.string().required("Meeting Id is required").trim().typeError("Invalid Meeting Id").min(3, "Too short")
                     .max(30, "Too long"),
-                emailId: Yup.string().matches(/^[a-zA-Z0-9\.]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Email Id is required"),
+                emailId: Yup.string().matches(/^[a-zA-Z0-9\.+]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Email Id is required"),
                 displayName: Yup.string().required("Name is required").trim().matches(/^[a-zA-Z0-9-~ ]+$/, "Invalid Title").typeError("Invalid Meeting Id").min(3, "Too short")
                     .max(20, "Too long"),
             })}
@@ -305,8 +305,14 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                                     {/* <input type="text" placeholder={'124567890'} {...formik.getFieldProps("meetingId")} />
                                                      */}
                                                     <Field name="meetingId" type="text" />
-                                                    <div className="input-right">
-                                                        <a href="#">
+                                                    <div className="input-right" onClick={() => {
+                                                        if (props.values.meetingId) {
+                                                            toast.success("Copy to clipboard", { autoClose: 500 });
+                                                            navigator.clipboard.writeText(props.values.meetingId)
+                                                        }
+
+                                                    }}>
+                                                        <a>
                                                             <img src="images/copy.png" alt="" />
                                                         </a>
                                                     </div>
@@ -341,8 +347,8 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                     </div>
                                     <div className="background-design" />
                                 </div>
-                                <img className="absolute-bg-img" src="images/onship-background.png" alt="" />
                             </section>
+                            <img className="absolute-bg-img" src="images/onship-background.png" alt="" />
                         </div>
                     )
                 }
@@ -452,13 +458,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         entryJWT: string
     }) {
         if (!formikData.entryJWT) {
-            this._initMeetingAsAParticipant(formikData)
+            this._userAuthentication(formikData)
         }
         else if (this.state.userType === "participant") {
-            this._initMeetingAsAParticipant(formikData)
+            this._userAuthentication(formikData)
         }
         else if (this.state.userType === "host") {
-            this._initMeetingAsAHost(formikData)
+            this._startMeeting(formikData)
         }
         else {
             toast.error("SOMETHING WENT WRONG IN USER_TYPE");
@@ -469,7 +475,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     /**
      * 
      */
-    async _initMeetingAsAHost(formikData: {
+    async _startMeeting(formikData: {
         emailId: string,
         meetingId: string,
         displayName: string,
@@ -513,7 +519,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
         }
     }
 
-    async _initMeetingAsAParticipant(formikData: {
+    async _userAuthentication(formikData: {
         emailId: string,
         meetingId: string,
         displayName: string,
@@ -521,14 +527,14 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
     }) {
         try {
             this.setState({ loader: true });
-            let response = await AxiosApiHitter('JOIN_MEETING', {
+            let response = await AxiosApiHitter('AUTH_MEETING', {
                 meetingId: formikData?.meetingId,
-                joinUserEmail: formikData?.emailId
+                userEmail: formikData?.emailId
             })
             this.setState({ loader: false });
             if (response?.data?.code === 200) {
                 if (response?.data?.role === "host" && !formikData.entryJWT) {
-                    return this._initMeetingAsAHost(formikData);
+                    return this._startMeeting(formikData);
                 }
                 let content = {
                     "context": {

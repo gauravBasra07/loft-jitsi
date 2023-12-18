@@ -8,11 +8,6 @@ import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 
 import { HangupContextMenuItem } from './HangupContextMenuItem';
-// import { getLocalParticipant } from '../participants/functions';
-import { getLocalParticipant } from '../../../base/participants/functions';
-import { AxiosApiHitter } from "../../../modules";
-import { AllMessages } from "../../../modules/AxiosApi/AllMessages";
-import { toast } from 'react-toastify';
 
 
 /**
@@ -46,45 +41,9 @@ export const EndConferenceButton = (props: IProps) => {
     const _isInBreakoutRoom = useSelector(isInBreakoutRoom);
     const toastId: any = useRef(null);
 
-    const onEndConference = useCallback(async () => {
-        // dispatch(endConference());
-
-        //getting user info
-        const state = APP.store.getState()
-        const { email } = getLocalParticipant(state) ?? {};
-        try {
-            toastId.current = toast.loading(AllMessages.WAITING_API_RESPONSE_MESSAGE);
-            let response = await AxiosApiHitter("END_MEETING", {
-                meetingId: window.location.pathname?.split('/')[1] || "",
-                userEmail: email || ""
-            })
-
-            if (response?.data?.code == 200) {
-                toast.update(toastId.current, {
-                    render: AllMessages?.END_CONFERENCE_MESSAGE,
-                    type: "success",
-                    isLoading: false,
-                    autoClose: 2000,
-                    closeButton: true
-                })
-                dispatch(endConference());
-            }
-            else {
-                throw new Error(response?.data?.error)
-            }
-        }
-        catch (err: any) {
-            toast.update(toastId.current, {
-                render: err.message,
-                type: "error",
-                isLoading: false,
-                autoClose: 2000,
-                closeButton: true
-            })
-        }
-
-        console.log("endConference");
-    }, [dispatch]);
+    const onEndConference = useCallback(() => {
+        dispatch(endConference());
+    }, [ dispatch ]);
 
     return (<>
         {!_isInBreakoutRoom && _isLocalParticipantModerator && <HangupContextMenuItem

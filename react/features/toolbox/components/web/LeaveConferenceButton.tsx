@@ -8,10 +8,6 @@ import { leaveConference } from '../../../base/conference/actions';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 
 import { HangupContextMenuItem } from './HangupContextMenuItem';
-import { getLocalParticipant } from '../../../base/participants/functions';
-import { AxiosApiHitter } from "../../../modules";
-import { toast } from 'react-toastify';
-import { AllMessages } from "../../../modules/AxiosApi/AllMessages";
 
 /**
  * The type of the React {@code Component} props of {@link LeaveConferenceButton}.
@@ -42,45 +38,10 @@ export const LeaveConferenceButton = (props: IProps) => {
     const dispatch = useDispatch();
     const toastId: any = useRef(null);
 
-    const onLeaveConference = useCallback(async () => {
-        // sendAnalytics(createToolbarEvent('hangup'));
-        // dispatch(leaveConference());
-
-        // LEAVE_MEETING
-
-        const state = APP.store.getState()
-        const { email } = getLocalParticipant(state) ?? {};
-        try {
-            toastId.current = toast.loading(AllMessages.WAITING_API_RESPONSE_MESSAGE);
-            let response = await AxiosApiHitter("LEAVE_MEETING", {
-                meetingId: window.location.pathname?.split('/')[1] || "",
-                userEmail: email || ""
-            })
-            if (response?.data?.code == 200) {
-                toast.update(toastId.current, {
-                    render: AllMessages?.LEAVE_CONFERENCE_MESSAGE,
-                    type: "success",
-                    isLoading: false,
-                    autoClose: 2000,
-                    closeButton: true
-                })
-                sendAnalytics(createToolbarEvent('hangup'));
-                dispatch(leaveConference());
-            }
-            else {
-                throw new Error(response?.data?.error)
-            }
-        }
-        catch (err: any) {
-            toast.update(toastId.current, {
-                render: err.message,
-                type: "error",
-                isLoading: false,
-                autoClose: 2000,
-                closeButton: true
-            })
-        }
-    }, [dispatch]);
+    const onLeaveConference = useCallback(() => {
+        sendAnalytics(createToolbarEvent('hangup'));
+        dispatch(leaveConference());
+    }, [ dispatch ]);
 
     return (
         <HangupContextMenuItem
