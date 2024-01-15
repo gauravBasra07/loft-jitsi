@@ -291,14 +291,14 @@ class LargeVideo extends Component<IProps> {
     _getCustomStyles() {
         const styles: any = {};
         const {
-            _customBackgroundColor,
             _customBackgroundImageUrl,
             _verticalFilmstripWidth,
             _verticalViewMaxWidth,
             _visibleFilmstrip
         } = this.props;
 
-        styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
+        // _customBackgroundColor,
+        styles.backgroundColor =  interfaceConfig.DEFAULT_BACKGROUND;
 
         if (this.props._backgroundAlpha !== undefined) {
             const alphaColor = setColorAlpha(styles.backgroundColor, this.props._backgroundAlpha);

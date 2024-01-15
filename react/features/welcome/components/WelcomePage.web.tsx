@@ -268,7 +268,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                                             <div className="cameraOff-black" />
                                                     }
 
-                                                </div>
+                                                </div>                                             
                                                 <div className="aud-vid-box">
                                                     {/* Mic button */}
                                                     <a className={`audio-vid-btn ${this.state.micShow == false ? "active" : ''}`} onClick={() => this.setState({ micShow: !this.state.micShow })}>
