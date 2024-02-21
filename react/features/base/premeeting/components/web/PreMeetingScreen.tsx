@@ -190,9 +190,9 @@ const PreMeetingScreen = ({
                         <div className="onship-logo">
                             <img src="images/vikrant-logo.png" alt="" />
                         </div>
-                        <h1 className={classes.title}>
+                        {/* <h1 className={classes.title}>
                             {title}
-                        </h1>
+                        </h1> */}
                         {/* {_roomName && (
                             <span className = { classes.roomName }>
                                 {_roomName}

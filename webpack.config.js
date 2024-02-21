@@ -13,9 +13,10 @@ const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
  */
 const devServerProxyTarget =
     process.env.WEBPACK_DEV_SERVER_PROXY_TARGET ||
-    "https://loftdev1.onship.app/" ||
     "https://loft.onship.app" ||
+    "https://onecaresolutions.frontm.ai/" ||
     "https://vikandconnect.frontm.ai/" ||
+    "https://loftdev1.onship.app/" ||
     "https://alpha.jitsi.net";
 
 /**

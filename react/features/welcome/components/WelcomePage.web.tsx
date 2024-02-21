@@ -230,7 +230,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                 displayName: this.state.displayName,
             }} validationSchema={Yup.object({
                 meetingId: Yup.string().required("Meeting Id is required").trim().typeError("Invalid Meeting Id").min(3, "Too short")
-                    .max(30, "Too long"),
+                    .max(200, "Too long"),
                 emailId: Yup.string().matches(/^[a-zA-Z0-9\.+]+[@][a-z]+[\.][a-z]{3}$/, "Invalid Email").trim().typeError("Invalid Email Id").required("Email Id is required"),
                 displayName: Yup.string().required("Name is required").trim().matches(/^[a-zA-Z0-9-~ ]+$/, "Invalid Title").typeError("Invalid Meeting Id").min(3, "Too short")
                     .max(20, "Too long"),
@@ -268,7 +268,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                                             <div className="cameraOff-black" />
                                                     }
 
-                                                </div>                                             
+                                                </div>
                                                 <div className="aud-vid-box">
                                                     {/* Mic button */}
                                                     <a className={`audio-vid-btn ${this.state.micShow == false ? "active" : ''}`} onClick={() => this.setState({ micShow: !this.state.micShow })}>
@@ -304,7 +304,7 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                                     <label htmlFor="">Meeting ID</label>
                                                     {/* <input type="text" placeholder={'124567890'} {...formik.getFieldProps("meetingId")} />
                                                      */}
-                                                    <Field name="meetingId" type="text" />
+                                                    <Field name="meetingId" type="text" style={{ paddingRight: '70px' }} />
                                                     <div className="input-right" onClick={() => {
                                                         if (props.values.meetingId) {
                                                             toast.success("Copy to clipboard", { autoClose: 500 });
