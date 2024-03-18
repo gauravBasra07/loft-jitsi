@@ -6,7 +6,7 @@ all.css
 *css.map
 .remote-sync.json
 .sync-config.cson
-ThirdPartyConfig.js
+react/ThirdPartyConfig.ts
 
 # CocoaPods
 Pods/
@@ -107,8 +107,6 @@ react-native-sdk/modules
 react-native-sdk/node_modules
 react-native-sdk/react
 react-native-sdk/service
-<<<<<<< HEAD
 react-native-sdk/sounds
-=======
-react-native-sdk/sounds
->>>>>>> master
+
+
